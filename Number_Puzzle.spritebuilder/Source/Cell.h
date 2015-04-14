@@ -10,4 +10,9 @@
 
 @interface Cell : CCNode
 
+@property (nonatomic, assign) NSInteger value;
+- (void)updateValueDisplay;
+
+@property (nonatomic, assign) BOOL mergedThisRound;
+
 @end

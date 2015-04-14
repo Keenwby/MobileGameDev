@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4A09662D1ABFB365000B4964 /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A09662C1ABFB365000B4964 /* Grid.m */; };
 		4A0966311ABFB385000B4964 /* Cell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0966301ABFB385000B4964 /* Cell.m */; };
+		4ABDE9751ADCDC4800FCD155 /* GameEnd.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ABDE9741ADCDC4800FCD155 /* GameEnd.m */; };
 		5B121030197484FA004C1E1D /* Number_PuzzleActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B12102F197484FA004C1E1D /* Number_PuzzleActivity.m */; };
 		5B121038197487F2004C1E1D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B737893E1807617C0076A88C /* AppDelegate.m */; };
 		7A046D8C19E8A20E004C4763 /* MainScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B7378993180767190076A88C /* MainScene.m */; };
@@ -148,6 +149,8 @@
 		4A09662C1ABFB365000B4964 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = Source/Grid.m; sourceTree = "<group>"; };
 		4A09662F1ABFB385000B4964 /* Cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cell.h; path = Source/Cell.h; sourceTree = "<group>"; };
 		4A0966301ABFB385000B4964 /* Cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Cell.m; path = Source/Cell.m; sourceTree = "<group>"; };
+		4ABDE9731ADCDC4800FCD155 /* GameEnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEnd.h; path = Source/GameEnd.h; sourceTree = "<group>"; };
+		4ABDE9741ADCDC4800FCD155 /* GameEnd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GameEnd.m; path = Source/GameEnd.m; sourceTree = "<group>"; };
 		5B12100919748273004C1E1D /* libEGL.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.so; path = /usr/lib/armv7a/libEGL.so; sourceTree = SDKROOT; };
 		5B12100F197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
 		5B121011197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
@@ -442,6 +445,8 @@
 				4A09662C1ABFB365000B4964 /* Grid.m */,
 				4A09662F1ABFB385000B4964 /* Cell.h */,
 				4A0966301ABFB385000B4964 /* Cell.m */,
+				4ABDE9731ADCDC4800FCD155 /* GameEnd.h */,
+				4ABDE9741ADCDC4800FCD155 /* GameEnd.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -816,6 +821,7 @@
 				7A046D8C19E8A20E004C4763 /* MainScene.m in Sources */,
 				5B121038197487F2004C1E1D /* AppDelegate.m in Sources */,
 				4A09662D1ABFB365000B4964 /* Grid.m in Sources */,
+				4ABDE9751ADCDC4800FCD155 /* GameEnd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

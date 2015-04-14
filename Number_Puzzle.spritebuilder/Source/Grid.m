@@ -8,6 +8,7 @@
 
 #import "Grid.h"
 #import "Cell.h"
+#import "GameEnd.h"
 
 @implementation Grid{
     
@@ -20,7 +21,8 @@
 }
 
 static const NSInteger GRID_SIZE = 5;
-static const NSInteger INIT_CELL = 5;
+static const NSInteger INIT_CELL = 2;
+static const NSInteger WIN_Cell = 16;
 
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
@@ -35,7 +37,9 @@ static const NSInteger INIT_CELL = 5;
             _gridArray[i][j] = _emptyCell;
         }
     }
-    [self initRandomCell];
+    [self spawnStartCells];
+    [self addGesture];
+
 }
 
 - (void) setup{
@@ -54,7 +58,7 @@ static const NSInteger INIT_CELL = 5;
         x = _cellInterval;
 
         for(int j = 0; j < GRID_SIZE; j++){
-            CCNodeColor *defaultNode = [CCNodeColor nodeWithColor:[CCColor cyanColor]];
+            CCNodeColor *defaultNode = [CCNodeColor nodeWithColor:[CCColor grayColor]];
             defaultNode.position = ccp(x,y);
             defaultNode.contentSize = CGSizeMake(_cellWidth, _cellWidth);
             [self addChild: defaultNode];
@@ -85,22 +89,299 @@ static const NSInteger INIT_CELL = 5;
     
 }
 
--(void) initRandomCell{
+- (void)spawnStartCells {
+    for (int i = 0; i < INIT_CELL; i++) {
+        [self spawnRandomCell];
+    }
+}
+
+- (void)spawnRandomCell {
+    BOOL spawned = NO;
     
-    for(int i = 0; i < INIT_CELL; i++){
+    while (!spawned) {
         NSInteger randomRow = arc4random() % GRID_SIZE;
         NSInteger randomColumn = arc4random() % GRID_SIZE;
-        NSLog(@"DDDDDDDD%ld, %ld", (long)randomColumn, (long)randomRow);
-        //Check if it is occupied
-        BOOL initSuccess = false;
-        while(!initSuccess){
-            if (_gridArray[randomColumn][randomRow] == _emptyCell){
-                [self addCellAtColunm:randomColumn Row: randomRow];
-                initSuccess = true;
-            }
+        
+        BOOL positionFree = (_gridArray[randomColumn][randomRow] == _emptyCell);
+        
+        if (positionFree) {
+            [self addCellAtColunm:randomColumn Row: randomRow];
+            spawned = YES;
         }
     }
 }
 
+- (void)addGesture
+{
+    UISwipeGestureRecognizer * toLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeRight:)];
+    [toLeft setDirection:(UISwipeGestureRecognizerDirectionRight)];
+    [[[CCDirector sharedDirector] view] addGestureRecognizer:toLeft];
+    
+    UISwipeGestureRecognizer * toRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeLeft:)];
+    [toRight setDirection:(UISwipeGestureRecognizerDirectionLeft)];
+    [[[CCDirector sharedDirector] view] addGestureRecognizer:toRight];
+    
+    UISwipeGestureRecognizer * toUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeUp:)];
+    [toUp setDirection:(UISwipeGestureRecognizerDirectionUp)];
+    [[[CCDirector sharedDirector] view] addGestureRecognizer:toUp];
+    
+    UISwipeGestureRecognizer * toDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeDown:)];
+    [toDown setDirection:(UISwipeGestureRecognizerDirectionDown)];
+    [[[CCDirector sharedDirector] view] addGestureRecognizer:toDown];
+}
+
+- (void)handleSwipeRight:(UIGestureRecognizer *)gesture
+{
+    [self move:ccp(1, 0)];
+}
+
+- (void)handleSwipeLeft:(UIGestureRecognizer *)gesture
+{
+    [self move:ccp(-1, 0)];
+    
+}
+
+- (void)handleSwipeUp:(UIGestureRecognizer *)gesture
+{
+    [self move:ccp(0, 1)];
+    
+}
+
+- (void)handleSwipeDown:(UIGestureRecognizer *)gesture
+{
+    [self move:ccp(0, -1)];
+
+}
+
+- (void)move:(CGPoint)direction {
+
+    // apply negative vector until reaching boundary, this way we get the Cell that is the furthest away
+    //bottom left corner
+    NSInteger currentX = 0;
+    NSInteger currentY = 0;
+    
+    BOOL movedCellsThisRound = FALSE;
+    
+    // Move to relevant edge by applying direction until reaching border
+    while ([self indexValid:currentX y:currentY]) {
+        CGFloat newX = currentX + direction.x;
+        CGFloat newY = currentY + direction.y;
+        if ([self indexValid:newX y:newY]) {
+            currentX = newX;
+            currentY = newY;
+        } else {
+            break;
+        }
+    }
+    // store initial row value to reset after completing each column
+    NSInteger initialY = currentY;
+    // define changing of x and y value (moving left, up, down or right?)
+    NSInteger xChange = -direction.x;
+    NSInteger yChange = -direction.y;
+    if (xChange == 0) {
+        xChange = 1;
+    }
+    if (yChange == 0) {
+        yChange = 1;
+    }
+    // visit column for column
+    while ([self indexValid:currentX y:currentY]) {
+        while ([self indexValid:currentX y:currentY]) {
+            // get Cell at current index
+            Cell *cell = _gridArray[currentX][currentY];
+            if ([cell isEqual:_emptyCell]) {
+                // if there is no Cell at this index -> skip
+                currentY += yChange;
+                continue;
+            }
+            // store index in temp variables to change them and store new location of this Cell
+            NSInteger newX = currentX;
+            NSInteger newY = currentY;
+            /* find the farthest position by iterating in direction of the vector until we reach border of grid or an occupied cell*/
+            while ([self indexValidAndUnoccupied:newX+direction.x y:newY+direction.y]) {
+                newX += direction.x;
+                newY += direction.y;
+            }
+            BOOL performMove = FALSE;
+            /* If we stopped moving in vector direction, but next index in vector direction is valid, this means the cell is occupied. Let's check if we can merge them*/
+            if ([self indexValid:newX+direction.x y:newY+direction.y]) {
+                // get the other Cell
+                NSInteger otherCellX = newX + direction.x;
+                NSInteger otherCellY = newY + direction.y;
+                Cell *otherCell = _gridArray[otherCellX][otherCellY];
+                // compare value of other Cell and also check if the other thile has been merged this round
+                if (cell.value == otherCell.value && !otherCell.mergedThisRound) {
+                    // merge Cells
+                    [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
+                    movedCellsThisRound = TRUE;
+                } else {
+                    // we cannot merge so we want to perform a move
+                    performMove = TRUE;
+                }
+            } else {
+                // we cannot merge so we want to perform a move
+                performMove = TRUE;
+            }
+            if (performMove) {
+                // Move Cell to furthest position
+                if (newX != currentX || newY !=currentY) {
+                    // only move Cell if position changed
+                    [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
+                    movedCellsThisRound = TRUE;
+                }
+            }
+            // move further in this column
+            currentY += yChange;
+        }
+        // move to the next column, start at the inital row
+        currentX += xChange;
+        currentY = initialY;
+    }
+    
+    if (movedCellsThisRound) {
+        [self nextRound];
+    }
+    
+}
+
+- (BOOL)indexValid:(NSInteger)x y:(NSInteger)y {
+    BOOL indexValid = TRUE;
+    indexValid &= x >= 0;
+    indexValid &= y >= 0;
+    if (indexValid) {
+        indexValid &= x < (int) [_gridArray count];
+        if (indexValid) {
+            indexValid &= y < (int) [(NSMutableArray*) _gridArray[x] count];
+        }
+    }
+    return indexValid;
+}
+
+- (BOOL)indexValidAndUnoccupied:(NSInteger)x y:(NSInteger)y {
+    BOOL indexValid = [self indexValid:x y:y];
+    if (!indexValid) {
+        return FALSE;
+    }
+    BOOL unoccupied = [_gridArray[x][y] isEqual:_emptyCell];
+    return unoccupied;
+}
+
+- (void)moveCell:(Cell *)cell fromIndex:(NSInteger)oldX oldY:(NSInteger)oldY newX:(NSInteger)newX newY:(NSInteger)newY {
+    _gridArray[newX][newY] = _gridArray[oldX][oldY];
+    _gridArray[oldX][oldY] = _emptyCell;
+    CGPoint newPosition = [self positionForColumn:newX row:newY];
+    CCActionMoveTo *moveTo = [CCActionMoveTo actionWithDuration:0.2f position:newPosition];
+    [cell runAction:moveTo];
+}
+
+- (CGPoint)positionForColumn:(NSInteger)column row:(NSInteger)row {
+    NSInteger x = _cellInterval + column * (_cellInterval + _cellWidth);
+    NSInteger y = _cellInterval + row * (_cellInterval + _cellWidth);
+    return CGPointMake(x,y);
+}
+
+- (void)mergeCellAtIndex:(NSInteger)x y:(NSInteger)y withCellAtIndex:(NSInteger)xOtherCell y:(NSInteger)yOtherCell {
+    // 1) update the game data
+    Cell *mergedCell = _gridArray[x][y];
+    Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
+    //Tracking scores
+    self.score += mergedCell.value + otherCell.value;
+    otherCell.value *= 2;
+    otherCell.mergedThisRound = TRUE;
+    if (otherCell.value == WIN_Cell) {
+        [self win];
+    }
+    _gridArray[x][y] = _emptyCell;
+    // 2) update the UI
+    CGPoint otherCellPosition = [self positionForColumn:xOtherCell row:yOtherCell];
+    CCActionMoveTo *moveTo = [CCActionMoveTo actionWithDuration:0.2f position:otherCellPosition];
+    CCActionRemove *remove = [CCActionRemove action];
+    CCActionCallBlock *mergeCell = [CCActionCallBlock actionWithBlock:^{
+        [otherCell updateValueDisplay];
+    }];
+    CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
+    [mergedCell runAction:sequence];
+}
+
+- (void)nextRound {
+    [self spawnRandomCell];
+    for (int i = 0; i < GRID_SIZE; i++) {
+        for (int j = 0; j < GRID_SIZE; j++) {
+            Cell *cell = _gridArray[i][j];
+            if (![cell isEqual:_emptyCell]) {
+                // reset merged flag
+                cell.mergedThisRound = FALSE;
+            }
+        }
+    }
+    BOOL movePossible = [self movePossible];
+    if (!movePossible) {
+        [self lose];
+    }
+}
+
+- (BOOL)movePossible {
+    for (int i = 0; i < GRID_SIZE; i++) {
+        for (int j = 0; j < GRID_SIZE; j++) {
+            Cell *cell = _gridArray[i][j];
+            // no Cell at this position
+            if ([cell isEqual:_emptyCell]) {
+                // move possible, we have a free field
+                return TRUE;
+            } else {
+                // there is a Cell at this position. Check if this Cell could move
+                Cell *topNeighbour = [self cellForIndex:i y:j+1];
+                Cell *bottomNeighbour = [self cellForIndex:i y:j-1];
+                Cell *leftNeighbour = [self cellForIndex:i-1 y:j];
+                Cell *rightNeighbour = [self cellForIndex:i+1 y:j];
+                NSArray *neighours = @[topNeighbour, bottomNeighbour, leftNeighbour, rightNeighbour];
+                for (id neighbourCell in neighours) {
+                    if (neighbourCell != _emptyCell) {
+                        Cell *neighbour = (Cell *)neighbourCell;
+                        if (neighbour.value == cell.value) {
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return FALSE;
+}
+
+- (void)win {
+    [self endGameWithMessage:@"You win!"];
+}
+
+- (void)lose {
+    [self endGameWithMessage:@"You lose!"];
+}
+
+- (void)endGameWithMessage:(NSString*)message {
+    GameEnd *gameEndPopover = (GameEnd *)[CCBReader load:@"GameEnd"];
+    gameEndPopover.positionType = CCPositionTypeNormalized;
+    gameEndPopover.position = ccp(0.5, 0.5);
+    gameEndPopover.zOrder = INT_MAX;
+    
+    [gameEndPopover setMessage:message score:self.score];
+    
+    [self addChild:gameEndPopover];
+    
+    NSNumber *highScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"];
+    if (self.score > [highScore intValue]) {
+        // new highscore!
+        highScore = [NSNumber numberWithInt:self.score];
+        [[NSUserDefaults standardUserDefaults] setObject:highScore forKey:@"highscore"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+}
+
+- (id)cellForIndex:(NSInteger)x y:(NSInteger)y {
+    if (![self indexValid:x y:y]) {
+        return _emptyCell;
+    } else {
+        return _gridArray[x][y];
+    }
+}
 
 @end

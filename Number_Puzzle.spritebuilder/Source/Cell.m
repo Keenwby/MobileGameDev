@@ -11,7 +11,23 @@
 @implementation Cell{
     
     CCNodeColor *_defaultNode;
-    CCLabelTTF *_value;
+    CCLabelTTF *_valueLabel;
+}
+
+- (void)didLoadFromCCB {
+    [self updateValueDisplay];
+}
+
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.value = (arc4random()%2+1)*2;
+    }
+    return self;
+}
+
+- (void)updateValueDisplay {
+    _valueLabel.string = [NSString stringWithFormat:@"%d", self.value];
 }
 
 @end
