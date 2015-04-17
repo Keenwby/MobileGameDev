@@ -20,8 +20,8 @@
     NSNull *_emptyCell;
 }
 
-static const NSInteger GRID_SIZE = 5;
-static const NSInteger INIT_CELL = 2;
+static const NSInteger GRID_SIZE = 3;
+static const NSInteger INIT_CELL = 8;
 static const NSInteger WIN_Cell = 16;
 
 - (void)didLoadFromCCB{
@@ -86,7 +86,6 @@ static const NSInteger WIN_Cell = 16;
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[delay, scaleUp]];
     //Run the animation
     [cell runAction:sequence];
-    
 }
 
 - (void)spawnStartCells {
