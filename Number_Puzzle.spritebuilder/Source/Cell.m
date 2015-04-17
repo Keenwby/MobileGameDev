@@ -14,8 +14,8 @@
     CCLabelTTF *_valueLabel;
 }
 
-static const NSInteger GRID_SIZE = 5;
-static int Fibonacci[GRID_SIZE * GRID_SIZE - 1];
+static const NSInteger WIN_NUM = 25;
+static int Fibonacci[WIN_NUM];
 static int num = -1;
 
 - (void)didLoadFromCCB {
@@ -37,39 +37,49 @@ static int num = -1;
     CCColor *defaultNode = nil;
     
     switch (self.value) {
-        case 2:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:20.f/255.f blue:80.f/255.f];
+        case 1:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:240.f/255.f blue:0.f/255.f];
             break;
-        case 4:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:20.f/255.f blue:140.f/255.f];
+        case 2:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:220.f/255.f blue:0.f/255.f];
+            break;
+        case 3:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:200.f/255.f blue:0.f/255.f];
+            break;
+        case 5:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:180.f/255.f blue:0.f/255.f];
             break;
         case 8:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:60.f/255.f blue:220.f/255.f];
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:160.f/255.f blue:0.f/255.f];
             break;
-        case 16:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:120.f/255.f blue:120.f/255.f];
+        case 13:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:140.f/255.f blue:0.f/255.f];
             break;
-        case 32:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:160.f/255.f blue:120.f/255.f];
+        case 21:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:120.f/255.f blue:0.f/255.f];
             break;
-        case 64:
-            defaultNode = [CCColor colorWithRed:20.f/255.f green:160.f/255.f blue:60.f/255.f];
+        case 34:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:100.f/255.f blue:0.f/255.f];
             break;
-        case 128:
-            defaultNode = [CCColor colorWithRed:50.f/255.f green:160.f/255.f blue:60.f/255.f];
+        case 55:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:88.f/255.f blue:0.f/255.f];
             break;
-        case 256:
-            defaultNode = [CCColor colorWithRed:80.f/255.f green:120.f/255.f blue:60.f/255.f];
+        case 89:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:65.f/255.f blue:0.f/255.f];
             break;
-        case 512:
-            defaultNode = [CCColor colorWithRed:140.f/255.f green:70.f/255.f blue:60.f/255.f];
+        case 144:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:42.f/255.f blue:0.f/255.f];
             break;
-        case 1024:
-            defaultNode = [CCColor colorWithRed:170.f/255.f green:30.f/255.f blue:60.f/255.f];
+        case 233:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:21.f/255.f blue:0.f/255.f];
             break;
-        case 2048:
-            defaultNode = [CCColor colorWithRed:220.f/255.f green:30.f/255.f blue:30.f/255.f];
+        case 377:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:10.f/255.f blue:0.f/255.f];
             break;
+        case 610:
+            defaultNode = [CCColor colorWithRed:0.f/255.f green:0.f/255.f blue:0.f/255.f];
+            break;
+
         default:
             defaultNode = [CCColor greenColor];
             break;
@@ -81,7 +91,7 @@ static int num = -1;
 - (void)initFibonacci{
     Fibonacci[0] = 1;
     Fibonacci[1] = 1;
-    for(int i = 2; i < GRID_SIZE * GRID_SIZE - 1; i++){
+    for(int i = 2; i < WIN_NUM; i++){
         Fibonacci[i] = Fibonacci[i - 1] + Fibonacci[i - 2];
     }
 }

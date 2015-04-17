@@ -21,8 +21,8 @@
 }
 
 static const NSInteger GRID_SIZE = 3;
-static const NSInteger INIT_CELL = 8;
-static const NSInteger WIN_Cell = 16;
+static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static const NSInteger WIN_NUM = 610;
 
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
@@ -210,23 +210,23 @@ static const NSInteger WIN_Cell = 16;
                 Cell *otherCell = _gridArray[otherCellX][otherCellY];
                 // compare value of other Cell and also check if the other thile has been merged this round
                 if (cell.value == otherCell.value && !otherCell.mergedThisRound) {
-                    // merge Cells
+                    // merge tiles
                     [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
-                    movedCellsThisRound = TRUE;
+                    movedCellsThisRound = YES;
                 } else {
                     // we cannot merge so we want to perform a move
-                    performMove = TRUE;
+                    performMove = YES;
                 }
             } else {
                 // we cannot merge so we want to perform a move
-                performMove = TRUE;
+                performMove = YES;
             }
             if (performMove) {
                 // Move Cell to furthest position
                 if (newX != currentX || newY !=currentY) {
                     // only move Cell if position changed
                     [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
-                    movedCellsThisRound = TRUE;
+                    //movedCellsThisRound = TRUE;
                 }
             }
             // move further in this column
@@ -285,9 +285,9 @@ static const NSInteger WIN_Cell = 16;
     Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
     //Tracking scores
     self.score += mergedCell.value + otherCell.value;
-    otherCell.value *= 2;
+    otherCell.value += mergedCell.value;
     otherCell.mergedThisRound = TRUE;
-    if (otherCell.value == WIN_Cell) {
+    if (otherCell.value == WIN_NUM) {
         [self win];
     }
     _gridArray[x][y] = _emptyCell;
@@ -314,9 +314,9 @@ static const NSInteger WIN_Cell = 16;
         }
     }
     BOOL movePossible = [self movePossible];
-    if (!movePossible) {
+    /*if (!movePossible) {
         [self lose];
-    }
+    }*/
 }
 
 - (BOOL)movePossible {

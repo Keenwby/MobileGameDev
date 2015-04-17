@@ -6,6 +6,7 @@
     Grid *_grid;
     CCLabelTTF *_scoreLabel;
     CCLabelTTF *_highestscoreLabel;
+    CCLabelTTF *_timerLabel;
 }
 
 - (void)didLoadFromCCB {
