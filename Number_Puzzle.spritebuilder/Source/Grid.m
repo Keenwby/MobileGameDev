@@ -20,7 +20,7 @@
     NSNull *_emptyCell;
 }
 
-static const NSInteger GRID_SIZE = 3;
+static const NSInteger GRID_SIZE = 4;
 static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
 static const NSInteger WIN_NUM = 610;
 

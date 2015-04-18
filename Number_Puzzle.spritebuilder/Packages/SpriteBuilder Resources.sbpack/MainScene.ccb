@@ -395,7 +395,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.20624999701976776</real>
+							<real>0.18437500298023224</real>
 							<real>0.27394363284111023</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -615,7 +615,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.20624999701976776</real>
+							<real>0.18437500298023224</real>
 							<real>0.19330988824367523</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -873,7 +873,7 @@
 						<string>Text</string>
 						<key>value</key>
 						<array>
-							<string>Score</string>
+							<string>Highest Score</string>
 							<false/>
 						</array>
 					</dict>
@@ -1275,7 +1275,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.78750002384185791</real>
+							<real>0.82187497615814209</real>
 							<real>0.27394363284111023</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -1495,7 +1495,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.78750002384185791</real>
+							<real>0.82187497615814209</real>
 							<real>0.19330988824367523</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -1533,7 +1533,7 @@
 						<string>Text</string>
 						<key>value</key>
 						<array>
-							<string>0:30</string>
+							<string>0:15</string>
 							<false/>
 						</array>
 					</dict>
