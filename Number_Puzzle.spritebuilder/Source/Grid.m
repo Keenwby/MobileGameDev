@@ -21,13 +21,8 @@
 }
 
 static const NSInteger GRID_SIZE = 3;
-<<<<<<< HEAD
 static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
 static const NSInteger STOP_NUM = 610;
-=======
-static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 2;
-static const NSInteger WIN_NUM = 610;
->>>>>>> origin/master
 static const NSInteger TIME_LIM = 15;
 
 - (void)didLoadFromCCB{
@@ -43,7 +38,6 @@ static const NSInteger TIME_LIM = 15;
             _gridArray[i][j] = _emptyCell;
         }
     }
-    self.score = 0;
     [self spawnStartCells];
     [self addGesture];
     [self iniTimer];
@@ -235,7 +229,6 @@ static const NSInteger TIME_LIM = 15;
                 if (newX != currentX || newY !=currentY) {
                     // only move Cell if position changed
                     [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
-                    [self playSound:@"swipe" ofType:@"mp3"];
                     //movedCellsThisRound = TRUE;
                     [self playSound:@"swipe" ofType:@"mp3"];
                 }
@@ -246,12 +239,8 @@ static const NSInteger TIME_LIM = 15;
         // move to the next column, start at the inital row
         currentX += xChange;
         currentY = initialY;
-        
     }
-<<<<<<< HEAD
    
-=======
->>>>>>> origin/master
     self.score++;
     if (movedCellsThisRound) {
         if (self.maxvalue < STOP_NUM) {
@@ -327,56 +316,6 @@ static const NSInteger TIME_LIM = 15;
     [mergedCell runAction:sequence];
 }
 
-<<<<<<< HEAD
-=======
-- (void)nextRound {
-    [self spawnRandomCell];
-    [self iniTimer];
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            if (![cell isEqual:_emptyCell]) {
-                // reset merged flag
-                cell.mergedThisRound = FALSE;
-            }
-        }
-    }
-    BOOL movePossible = [self movePossible];
-    /*if (!movePossible) {
-        [self lose];
-    }*/
-}
-
-- (BOOL)movePossible {
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            // no Cell at this position
-            if ([cell isEqual:_emptyCell]) {
-                // move possible, we have a free field
-                return TRUE;
-            } else {
-                // there is a Cell at this position. Check if this Cell could move
-                Cell *topNeighbour = [self cellForIndex:i y:j+1];
-                Cell *bottomNeighbour = [self cellForIndex:i y:j-1];
-                Cell *leftNeighbour = [self cellForIndex:i-1 y:j];
-                Cell *rightNeighbour = [self cellForIndex:i+1 y:j];
-                NSArray *neighours = @[topNeighbour, bottomNeighbour, leftNeighbour, rightNeighbour];
-                for (id neighbourCell in neighours) {
-                    if (neighbourCell != _emptyCell) {
-                        Cell *neighbour = (Cell *)neighbourCell;
-                        if (neighbour.value == cell.value) {
-                            return TRUE;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return FALSE;
-}
-
->>>>>>> origin/master
 - (void)win {
     Cell *cell = (Cell*)[CCBReader load:@"Cell"];
     [cell setNum: -1];
@@ -415,49 +354,6 @@ static const NSInteger TIME_LIM = 15;
         return _gridArray[x][y];
     }
 }
-//Sound Effect
--(void)playSound:(NSString*)sound ofType:(NSString*)soundType
-{
-    
-    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(dispatchQueue, ^(void) {
-        
-        CFBundleRef mainBundle = CFBundleGetMainBundle();
-        CFURLRef soundFileURLref;
-        soundFileURLref = CFBundleCopyResourceURL(mainBundle ,(__bridge CFStringRef)sound,CFSTR ("wav"),NULL);
-        UInt32 soundID;
-        AudioServicesCreateSystemSoundID(soundFileURLref, &soundID);
-        AudioServicesPlaySystemSound(soundID);
-        CFRelease(soundFileURLref);
-        
-    });
-}
-
--(void) iniTimer{
-    
-    self.n = TIME_LIM;
-    self.second = TIME_LIM;
-
-}
-
--(void)updateTimer:(NSTimer *)timer
-{
-    self.second = self.second - 1;
-    if(self.second < 0){
-        [timer invalidate];
-        [self lose];
-    }
-    self.timeleft = self.n;
-    if(self.n>=10){
-        self.timeleft = self.n;
-        NSLog(@"0:%i",self.timeleft);
-    }else{
-        self.timeleft = self.n;
-        NSLog(@"0:0%i",self.timeleft);
-    }
-    self.n = self.n - 1;
-}
-
 
 //Sound Effect
 -(void)playSound:(NSString*)sound ofType:(NSString*)soundType

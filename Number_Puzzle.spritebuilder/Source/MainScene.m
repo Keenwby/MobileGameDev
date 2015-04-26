@@ -4,7 +4,6 @@
 @implementation MainScene{
     
     Grid *_grid;
-    
     CCLabelTTF *_scoreLabel;
     CCLabelTTF *_highestscoreLabel;
     CCLabelTTF *_timerLabel;
@@ -13,17 +12,12 @@
 - (void)didLoadFromCCB {
     [_grid addObserver:self forKeyPath:@"score" options:0 context:NULL];
     [_grid addObserver:self forKeyPath:@"timeleft" options:0 context:NULL];
-<<<<<<< HEAD
-=======
-    //Display the highest score
->>>>>>> origin/master
     [[NSUserDefaults standardUserDefaults] addObserver:self
                                             forKeyPath:@"highscore"
                                                options:0
                                                context:NULL];
     // load highscore
     [self updateHighscore];
-    //[self initTimer];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath

@@ -14,11 +14,8 @@
 @property (nonatomic, assign) NSInteger timeleft;
 @property int n ;
 @property int second;
-<<<<<<< HEAD
 @property NSInteger maxvalue;
 
 - (void) setNum:(NSInteger)Value;
-=======
->>>>>>> origin/master
 
 @end

@@ -12,11 +12,7 @@
 
 @property (nonatomic, assign) NSInteger value;
 - (void)updateValueDisplay;
-<<<<<<< HEAD
 - (void) setNum:(NSInteger)Value;
-=======
-+ (void) initnum;
->>>>>>> origin/master
 @property (nonatomic, assign) BOOL mergedThisRound;
 
 @end
