@@ -7,6 +7,7 @@
 //
 
 #import "GameEnd.h"
+#import "Cell.h"
 
 @implementation GameEnd {
     CCLabelTTF *_messageLabel;
@@ -15,6 +16,7 @@
 
 - (void)newGame {
     CCScene *mainScene = [CCBReader loadAsScene:@"MainScene"];
+    Cell.initnum;
     [[CCDirector sharedDirector]replaceScene:mainScene];
 }
 

@@ -12,7 +12,7 @@
 
 @property (nonatomic, assign) NSInteger value;
 - (void)updateValueDisplay;
-
++ (void) initnum;
 @property (nonatomic, assign) BOOL mergedThisRound;
 
 @end

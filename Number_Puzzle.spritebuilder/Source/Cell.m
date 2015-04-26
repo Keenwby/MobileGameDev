@@ -14,8 +14,8 @@
     CCLabelTTF *_valueLabel;
 }
 
-static const NSInteger WIN_NUM = 25;
-static int Fibonacci[WIN_NUM];
+static const NSInteger ROUND_NUM = 15;
+static int Fibonacci[ROUND_NUM];
 static int num = -1;
 
 - (void)didLoadFromCCB {
@@ -26,7 +26,12 @@ static int num = -1;
 - (id)init {
     self = [super init];
     if (self) {
-        self.value = Fibonacci[num++];
+        if(num<ROUND_NUM){
+            self.value = Fibonacci[num++];
+        }else{
+            num-=14;
+            self.value = Fibonacci[num++];
+        }
     }
     return self;
 }
@@ -91,9 +96,13 @@ static int num = -1;
 - (void)initFibonacci{
     Fibonacci[0] = 1;
     Fibonacci[1] = 1;
-    for(int i = 2; i < WIN_NUM; i++){
+    for(int i = 2; i < ROUND_NUM; i++){
         Fibonacci[i] = Fibonacci[i - 1] + Fibonacci[i - 2];
     }
+}
+
++ (void) initnum{
+    num = -1;
 }
 
 @end

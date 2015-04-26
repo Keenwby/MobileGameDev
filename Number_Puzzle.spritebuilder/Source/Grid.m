@@ -20,9 +20,10 @@
     NSNull *_emptyCell;
 }
 
-static const NSInteger GRID_SIZE = 4;
-static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static const NSInteger GRID_SIZE = 3;
+static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 2;
 static const NSInteger WIN_NUM = 610;
+static const NSInteger TIME_LIM = 15;
 
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
@@ -37,9 +38,11 @@ static const NSInteger WIN_NUM = 610;
             _gridArray[i][j] = _emptyCell;
         }
     }
+    self.score = 0;
     [self spawnStartCells];
     [self addGesture];
-
+    [self iniTimer];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
 }
 
 - (void) setup{
@@ -209,7 +212,7 @@ static const NSInteger WIN_NUM = 610;
                 NSInteger otherCellY = newY + direction.y;
                 Cell *otherCell = _gridArray[otherCellX][otherCellY];
                 // compare value of other Cell and also check if the other thile has been merged this round
-                if (cell.value == otherCell.value && !otherCell.mergedThisRound) {
+                if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
                     // merge tiles
                     [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
                     movedCellsThisRound = YES;
@@ -226,6 +229,7 @@ static const NSInteger WIN_NUM = 610;
                 if (newX != currentX || newY !=currentY) {
                     // only move Cell if position changed
                     [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
+                    [self playSound:@"swipe" ofType:@"mp3"];
                     //movedCellsThisRound = TRUE;
                 }
             }
@@ -235,8 +239,9 @@ static const NSInteger WIN_NUM = 610;
         // move to the next column, start at the inital row
         currentX += xChange;
         currentY = initialY;
+        
     }
-    
+    self.score++;
     if (movedCellsThisRound) {
         [self nextRound];
     }
@@ -284,8 +289,7 @@ static const NSInteger WIN_NUM = 610;
     Cell *mergedCell = _gridArray[x][y];
     Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
     //Tracking scores
-    self.score += mergedCell.value + otherCell.value;
-    otherCell.value += mergedCell.value;
+    otherCell.value = mergedCell.value - otherCell.value;
     otherCell.mergedThisRound = TRUE;
     if (otherCell.value == WIN_NUM) {
         [self win];
@@ -297,6 +301,7 @@ static const NSInteger WIN_NUM = 610;
     CCActionRemove *remove = [CCActionRemove action];
     CCActionCallBlock *mergeCell = [CCActionCallBlock actionWithBlock:^{
         [otherCell updateValueDisplay];
+        [self playSound:@"merge" ofType:@"mp3"];
     }];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
     [mergedCell runAction:sequence];
@@ -304,6 +309,7 @@ static const NSInteger WIN_NUM = 610;
 
 - (void)nextRound {
     [self spawnRandomCell];
+    [self iniTimer];
     for (int i = 0; i < GRID_SIZE; i++) {
         for (int j = 0; j < GRID_SIZE; j++) {
             Cell *cell = _gridArray[i][j];
@@ -382,5 +388,48 @@ static const NSInteger WIN_NUM = 610;
         return _gridArray[x][y];
     }
 }
+//Sound Effect
+-(void)playSound:(NSString*)sound ofType:(NSString*)soundType
+{
+    
+    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(dispatchQueue, ^(void) {
+        
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef soundFileURLref;
+        soundFileURLref = CFBundleCopyResourceURL(mainBundle ,(__bridge CFStringRef)sound,CFSTR ("wav"),NULL);
+        UInt32 soundID;
+        AudioServicesCreateSystemSoundID(soundFileURLref, &soundID);
+        AudioServicesPlaySystemSound(soundID);
+        CFRelease(soundFileURLref);
+        
+    });
+}
+
+-(void) iniTimer{
+    
+    self.n = TIME_LIM;
+    self.second = TIME_LIM;
+
+}
+
+-(void)updateTimer:(NSTimer *)timer
+{
+    self.second = self.second - 1;
+    if(self.second < 0){
+        [timer invalidate];
+        [self lose];
+    }
+    self.timeleft = self.n;
+    if(self.n>=10){
+        self.timeleft = self.n;
+        NSLog(@"0:%i",self.timeleft);
+    }else{
+        self.timeleft = self.n;
+        NSLog(@"0:0%i",self.timeleft);
+    }
+    self.n = self.n - 1;
+}
+
 
 @end
