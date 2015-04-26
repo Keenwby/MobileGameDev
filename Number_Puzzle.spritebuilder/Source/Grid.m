@@ -20,9 +20,10 @@
     NSNull *_emptyCell;
 }
 
-static const NSInteger GRID_SIZE = 4;
+static const NSInteger GRID_SIZE = 3;
 static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
-static const NSInteger WIN_NUM = 610;
+static const NSInteger STOP_NUM = 610;
+static const NSInteger TIME_LIM = 15;
 
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
@@ -39,7 +40,8 @@ static const NSInteger WIN_NUM = 610;
     }
     [self spawnStartCells];
     [self addGesture];
-
+    [self iniTimer];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
 }
 
 - (void) setup{
@@ -85,6 +87,7 @@ static const NSInteger WIN_NUM = 610;
     CCActionScaleTo *scaleUp = [CCActionScaleTo actionWithDuration:0.3f scale:1.0f];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[delay, scaleUp]];
     //Run the animation
+    self.maxvalue = cell.value;
     [cell runAction:sequence];
 }
 
@@ -209,7 +212,7 @@ static const NSInteger WIN_NUM = 610;
                 NSInteger otherCellY = newY + direction.y;
                 Cell *otherCell = _gridArray[otherCellX][otherCellY];
                 // compare value of other Cell and also check if the other thile has been merged this round
-                if (cell.value == otherCell.value && !otherCell.mergedThisRound) {
+                if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
                     // merge tiles
                     [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
                     movedCellsThisRound = YES;
@@ -227,6 +230,7 @@ static const NSInteger WIN_NUM = 610;
                     // only move Cell if position changed
                     [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
                     //movedCellsThisRound = TRUE;
+                    [self playSound:@"swipe" ofType:@"mp3"];
                 }
             }
             // move further in this column
@@ -236,9 +240,22 @@ static const NSInteger WIN_NUM = 610;
         currentX += xChange;
         currentY = initialY;
     }
-    
+   
+    self.score++;
     if (movedCellsThisRound) {
-        [self nextRound];
+        if (self.maxvalue < STOP_NUM) {
+         [self spawnRandomCell];
+        }
+        [self iniTimer];
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                Cell *cell = _gridArray[i][j];
+                if (![cell isEqual:_emptyCell]) {
+                    // reset merged flag
+                    cell.mergedThisRound = FALSE;
+                }
+            }
+        }
     }
     
 }
@@ -284,12 +301,8 @@ static const NSInteger WIN_NUM = 610;
     Cell *mergedCell = _gridArray[x][y];
     Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
     //Tracking scores
-    self.score += mergedCell.value + otherCell.value;
-    otherCell.value += mergedCell.value;
+    otherCell.value = mergedCell.value - otherCell.value;
     otherCell.mergedThisRound = TRUE;
-    if (otherCell.value == WIN_NUM) {
-        [self win];
-    }
     _gridArray[x][y] = _emptyCell;
     // 2) update the UI
     CGPoint otherCellPosition = [self positionForColumn:xOtherCell row:yOtherCell];
@@ -297,62 +310,21 @@ static const NSInteger WIN_NUM = 610;
     CCActionRemove *remove = [CCActionRemove action];
     CCActionCallBlock *mergeCell = [CCActionCallBlock actionWithBlock:^{
         [otherCell updateValueDisplay];
+        [self playSound:@"merge" ofType:@"mp3"];
     }];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
     [mergedCell runAction:sequence];
 }
 
-- (void)nextRound {
-    [self spawnRandomCell];
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            if (![cell isEqual:_emptyCell]) {
-                // reset merged flag
-                cell.mergedThisRound = FALSE;
-            }
-        }
-    }
-    BOOL movePossible = [self movePossible];
-    /*if (!movePossible) {
-        [self lose];
-    }*/
-}
-
-- (BOOL)movePossible {
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            // no Cell at this position
-            if ([cell isEqual:_emptyCell]) {
-                // move possible, we have a free field
-                return TRUE;
-            } else {
-                // there is a Cell at this position. Check if this Cell could move
-                Cell *topNeighbour = [self cellForIndex:i y:j+1];
-                Cell *bottomNeighbour = [self cellForIndex:i y:j-1];
-                Cell *leftNeighbour = [self cellForIndex:i-1 y:j];
-                Cell *rightNeighbour = [self cellForIndex:i+1 y:j];
-                NSArray *neighours = @[topNeighbour, bottomNeighbour, leftNeighbour, rightNeighbour];
-                for (id neighbourCell in neighours) {
-                    if (neighbourCell != _emptyCell) {
-                        Cell *neighbour = (Cell *)neighbourCell;
-                        if (neighbour.value == cell.value) {
-                            return TRUE;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return FALSE;
-}
-
 - (void)win {
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
     [self endGameWithMessage:@"You win!"];
 }
 
 - (void)lose {
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
     [self endGameWithMessage:@"You lose!"];
 }
 
@@ -382,5 +354,42 @@ static const NSInteger WIN_NUM = 610;
         return _gridArray[x][y];
     }
 }
+
+//Sound Effect
+-(void)playSound:(NSString*)sound ofType:(NSString*)soundType
+{
+    
+    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(dispatchQueue, ^(void) {
+        
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef soundFileURLref;
+        soundFileURLref = CFBundleCopyResourceURL(mainBundle ,(__bridge CFStringRef)sound,CFSTR ("wav"),NULL);
+        UInt32 soundID;
+        AudioServicesCreateSystemSoundID(soundFileURLref, &soundID);
+        AudioServicesPlaySystemSound(soundID);
+        CFRelease(soundFileURLref);
+        
+    });
+}
+
+-(void) iniTimer{
+    
+    self.n = TIME_LIM;
+    self.second = TIME_LIM;
+    
+}
+
+-(void)updateTimer:(NSTimer *)timer
+{
+    self.second = self.second - 1;
+    if(self.second < 0){
+        [timer invalidate];
+        [self lose];
+    }
+    self.timeleft = self.n;
+    self.n = self.n - 1;
+}
+
 
 @end

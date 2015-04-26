@@ -16,8 +16,7 @@
 
 static const NSInteger WIN_NUM = 25;
 static int Fibonacci[WIN_NUM];
-static int num = -1;
-
+int num = -1;
 - (void)didLoadFromCCB {
     [self initFibonacci];
     [self updateValueDisplay];
@@ -94,6 +93,10 @@ static int num = -1;
     for(int i = 2; i < WIN_NUM; i++){
         Fibonacci[i] = Fibonacci[i - 1] + Fibonacci[i - 2];
     }
+}
+
+- (void) setNum:(NSInteger)Value {
+    num = Value;
 }
 
 @end

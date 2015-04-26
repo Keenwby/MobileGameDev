@@ -11,5 +11,11 @@
 @interface Grid : CCNodeColor
 
 @property (nonatomic, assign) NSInteger score;
+@property (nonatomic, assign) NSInteger timeleft;
+@property int n ;
+@property int second;
+@property NSInteger maxvalue;
+
+- (void) setNum:(NSInteger)Value;
 
 @end
