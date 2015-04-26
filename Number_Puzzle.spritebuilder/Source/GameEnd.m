@@ -16,6 +16,7 @@
 
 - (void)newGame {
     CCScene *mainScene = [CCBReader loadAsScene:@"MainScene"];
+    Cell.initnum;
     [[CCDirector sharedDirector]replaceScene:mainScene];
 }
 
