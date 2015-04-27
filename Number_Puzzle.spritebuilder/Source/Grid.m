@@ -28,7 +28,7 @@ static const NSInteger TIME_LIM = 15;
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
     [self setup];
-    
+    self.userInteractionEnabled = TRUE;
     //Init the start cells
     _gridArray = [NSMutableArray array];
     _emptyCell = [NSNull null];
@@ -44,6 +44,21 @@ static const NSInteger TIME_LIM = 15;
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
 }
 
+-(void) touchBegan:(CCTouch *)touch withEvent:(UIEvent *)event
+{
+    CGPoint touchLocation = [touch locationInNode:self];
+    BOOL spawned = NO;
+        NSInteger touchRow = (int)(touchLocation.y / (_cellWidth + _cellInterval));
+        NSInteger touchColumn = (int)(touchLocation.x / (_cellWidth + _cellInterval));
+    
+        NSLog(@"%d %d", touchRow, touchColumn);
+        /*BOOL positionFree = (_gridArray[randomColumn][randomRow] == _emptyCell);
+        
+        if (positionFree) {
+            [self addCellAtColunm:randomColumn Row: randomRow];
+            spawned = YES;//
+        }*/
+}
 - (void) setup{
     //Load the cell
     CCNode *cell = [CCBReader load:@"Cell"];
