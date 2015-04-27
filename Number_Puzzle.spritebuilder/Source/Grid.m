@@ -20,8 +20,8 @@
     NSNull *_emptyCell;
 }
 
-static const NSInteger GRID_SIZE = 3;
-static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static NSInteger GRID_SIZE = 4;
+//static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
 static const NSInteger STOP_NUM = 610;
 static const NSInteger TIME_LIM = 15;
 
@@ -92,7 +92,7 @@ static const NSInteger TIME_LIM = 15;
 }
 
 - (void)spawnStartCells {
-    for (int i = 0; i < INIT_CELL; i++) {
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE - 1; i++) {
         [self spawnRandomCell];
     }
 }
@@ -156,7 +156,8 @@ static const NSInteger TIME_LIM = 15;
 }
 
 - (void)move:(CGPoint)direction {
-
+    
+    self.livecells = GRID_SIZE * GRID_SIZE;
     // apply negative vector until reaching boundary, this way we get the Cell that is the furthest away
     //bottom left corner
     NSInteger currentX = 0;
@@ -193,6 +194,7 @@ static const NSInteger TIME_LIM = 15;
             Cell *cell = _gridArray[currentX][currentY];
             if ([cell isEqual:_emptyCell]) {
                 // if there is no Cell at this index -> skip
+                self.livecells--;
                 currentY += yChange;
                 continue;
             }
@@ -215,6 +217,7 @@ static const NSInteger TIME_LIM = 15;
                 if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
                     // merge tiles
                     [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
+                    self.livecells--;
                     movedCellsThisRound = YES;
                 } else {
                     // we cannot merge so we want to perform a move
@@ -244,7 +247,8 @@ static const NSInteger TIME_LIM = 15;
     self.score++;
     if (movedCellsThisRound) {
         if (self.maxvalue < STOP_NUM) {
-         [self spawnRandomCell];
+            [self spawnRandomCell];
+            self.livecells++;
         }
         [self iniTimer];
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -257,7 +261,14 @@ static const NSInteger TIME_LIM = 15;
             }
         }
     }
-    
+    //Win and lose condition
+    if(self.livecells == 1){
+        if (self.lastvalue == 0) {
+            [self win];
+        }else{
+            [self lose];
+        }
+    }
 }
 
 - (BOOL)indexValid:(NSInteger)x y:(NSInteger)y {
@@ -313,16 +324,24 @@ static const NSInteger TIME_LIM = 15;
         [self playSound:@"merge" ofType:@"mp3"];
     }];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
+    
+    self.lastvalue = otherCell.value;
+    
     [mergedCell runAction:sequence];
 }
 
 - (void)win {
+    self.winscore = self.score;
     Cell *cell = (Cell*)[CCBReader load:@"Cell"];
     [cell setNum: -1];
+    if (GRID_SIZE == 4) {
+        GRID_SIZE = 3;
+    }
     [self endGameWithMessage:@"You win!"];
 }
 
 - (void)lose {
+    self.winscore = 0;
     Cell *cell = (Cell*)[CCBReader load:@"Cell"];
     [cell setNum: -1];
     [self endGameWithMessage:@"You lose!"];
@@ -339,9 +358,9 @@ static const NSInteger TIME_LIM = 15;
     [self addChild:gameEndPopover];
     
     NSNumber *highScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"];
-    if (self.score > [highScore intValue]) {
+    if (self.winscore < [highScore intValue]) {
         // new highscore!
-        highScore = [NSNumber numberWithInt:self.score];
+        highScore = [NSNumber numberWithInt:self.winscore];
         [[NSUserDefaults standardUserDefaults] setObject:highScore forKey:@"highscore"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
