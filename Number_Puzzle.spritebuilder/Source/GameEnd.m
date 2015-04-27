@@ -7,6 +7,7 @@
 //
 
 #import "GameEnd.h"
+#import "Cell.h"
 
 @implementation GameEnd {
     CCLabelTTF *_messageLabel;

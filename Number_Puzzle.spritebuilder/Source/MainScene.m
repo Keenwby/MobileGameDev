@@ -11,7 +11,7 @@
 
 - (void)didLoadFromCCB {
     [_grid addObserver:self forKeyPath:@"score" options:0 context:NULL];
-    //Display the highest score
+    [_grid addObserver:self forKeyPath:@"timeleft" options:0 context:NULL];
     [[NSUserDefaults standardUserDefaults] addObserver:self
                                             forKeyPath:@"highscore"
                                                options:0
@@ -27,6 +27,13 @@
 {
     if ([keyPath isEqualToString:@"score"]) {
         _scoreLabel.string = [NSString stringWithFormat:@"%d", _grid.score];
+    }else if ([keyPath isEqualToString:@"timeleft"]) {
+        if(_grid.timeleft>=10){
+            _timerLabel.string = [NSString stringWithFormat:@"0:%d", _grid.timeleft];
+        }else{
+            _timerLabel.string = [NSString stringWithFormat:@"0:0%d", _grid.timeleft];
+        }
+        
     }else if ([keyPath isEqualToString:@"highscore"]) {
         [self updateHighscore];
     }
@@ -34,6 +41,7 @@
 
 - (void)dealloc {
     [_grid removeObserver:self forKeyPath:@"score"];
+    [_grid removeObserver:self forKeyPath:@"timeleft"];
 }
 
 - (void)updateHighscore {

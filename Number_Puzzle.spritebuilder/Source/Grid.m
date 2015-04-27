@@ -18,16 +18,20 @@
     //Store the cell using index of Grid
     NSMutableArray *_gridArray;
     NSNull *_emptyCell;
+    float touch_x;
+    float touch_y;
 }
 
-static const NSInteger GRID_SIZE = 4;
-static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
-static const NSInteger WIN_NUM = 610;
+static NSInteger GRID_SIZE = 3;
+//static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static const NSInteger STOP_NUM_SMALL = 610;
+static const NSInteger STOP_NUM_BIG = 2584;
+static const NSInteger TIME_LIM = 15;
 
 - (void)didLoadFromCCB{
     //Set up the grid immediately the scene is initialized
     [self setup];
-    
+    self.userInteractionEnabled = TRUE;
     //Init the start cells
     _gridArray = [NSMutableArray array];
     _emptyCell = [NSNull null];
@@ -39,10 +43,20 @@ static const NSInteger WIN_NUM = 610;
     }
     [self spawnStartCells];
     [self addGesture];
-
+    [self iniTimer];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
 }
 
+-(void) touchBegan:(CCTouch *)touch withEvent:(UIEvent *)event
+{
+    CGPoint touchLocation = [touch locationInNode:self];
+    BOOL spawned = NO;
+    //Get Touch Location
+    touch_x = touchLocation.x;
+    touch_y = touchLocation.y;
+}
 - (void) setup{
+    self.livecells = 0;
     //Load the cell
     CCNode *cell = [CCBReader load:@"Cell"];
     _cellWidth = cell.contentSize.width;
@@ -56,7 +70,7 @@ static const NSInteger WIN_NUM = 610;
     float y = _cellInterval;
     for(int i = 0; i < GRID_SIZE; i++){
         x = _cellInterval;
-
+        
         for(int j = 0; j < GRID_SIZE; j++){
             CCNodeColor *defaultNode = [CCNodeColor nodeWithColor:[CCColor grayColor]];
             defaultNode.position = ccp(x,y);
@@ -85,18 +99,19 @@ static const NSInteger WIN_NUM = 610;
     CCActionScaleTo *scaleUp = [CCActionScaleTo actionWithDuration:0.3f scale:1.0f];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[delay, scaleUp]];
     //Run the animation
+    self.maxvalue = cell.value;
+    self.livecells++;
     [cell runAction:sequence];
 }
 
 - (void)spawnStartCells {
-    for (int i = 0; i < INIT_CELL; i++) {
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE - 1; i++) {
         [self spawnRandomCell];
     }
 }
 
 - (void)spawnRandomCell {
     BOOL spawned = NO;
-    
     while (!spawned) {
         NSInteger randomRow = arc4random() % GRID_SIZE;
         NSInteger randomColumn = arc4random() % GRID_SIZE;
@@ -149,15 +164,15 @@ static const NSInteger WIN_NUM = 610;
 - (void)handleSwipeDown:(UIGestureRecognizer *)gesture
 {
     [self move:ccp(0, -1)];
-
+    
 }
 
-- (void)move:(CGPoint)direction {
-
+- (void)move:(CGPoint)direction{
+    
     // apply negative vector until reaching boundary, this way we get the Cell that is the furthest away
     //bottom left corner
-    NSInteger currentX = 0;
-    NSInteger currentY = 0;
+    NSInteger currentX = (int)(touch_x / (_cellWidth + _cellInterval));
+    NSInteger currentY = (int)(touch_y / (_cellWidth + _cellInterval));
     
     BOOL movedCellsThisRound = FALSE;
     
@@ -172,75 +187,104 @@ static const NSInteger WIN_NUM = 610;
             break;
         }
     }
+   
     // store initial row value to reset after completing each column
     NSInteger initialY = currentY;
+    NSInteger initialX = currentX;
+    NSLog(@"initialX=%d initialY=%d", initialX, initialY);
     // define changing of x and y value (moving left, up, down or right?)
     NSInteger xChange = -direction.x;
     NSInteger yChange = -direction.y;
-    if (xChange == 0) {
-        xChange = 1;
-    }
-    if (yChange == 0) {
-        yChange = 1;
-    }
+    
+    NSLog(@"%d %d", xChange, yChange);
+    
     // visit column for column
     while ([self indexValid:currentX y:currentY]) {
-        while ([self indexValid:currentX y:currentY]) {
-            // get Cell at current index
-            Cell *cell = _gridArray[currentX][currentY];
-            if ([cell isEqual:_emptyCell]) {
-                // if there is no Cell at this index -> skip
-                currentY += yChange;
-                continue;
-            }
-            // store index in temp variables to change them and store new location of this Cell
-            NSInteger newX = currentX;
-            NSInteger newY = currentY;
-            /* find the farthest position by iterating in direction of the vector until we reach border of grid or an occupied cell*/
-            while ([self indexValidAndUnoccupied:newX+direction.x y:newY+direction.y]) {
-                newX += direction.x;
-                newY += direction.y;
-            }
-            BOOL performMove = FALSE;
-            /* If we stopped moving in vector direction, but next index in vector direction is valid, this means the cell is occupied. Let's check if we can merge them*/
-            if ([self indexValid:newX+direction.x y:newY+direction.y]) {
-                // get the other Cell
-                NSInteger otherCellX = newX + direction.x;
-                NSInteger otherCellY = newY + direction.y;
-                Cell *otherCell = _gridArray[otherCellX][otherCellY];
-                // compare value of other Cell and also check if the other thile has been merged this round
-                if (cell.value == otherCell.value && !otherCell.mergedThisRound) {
-                    // merge tiles
-                    [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
-                    movedCellsThisRound = YES;
-                } else {
-                    // we cannot merge so we want to perform a move
-                    performMove = YES;
-                }
+        // get Cell at current index
+        Cell *cell = _gridArray[currentX][currentY];
+        if ([cell isEqual:_emptyCell]) {
+            // if there is no Cell at this index -> skip
+            currentY += yChange;
+            currentX += xChange;
+            continue;
+        }
+        // store index in temp variables to change them and store new location of this Cell
+        NSInteger newX = currentX;
+        NSInteger newY = currentY;
+        /* find the farthest position by iterating in direction of the vector until we reach border of grid or an occupied cell*/
+        while ([self indexValidAndUnoccupied:newX+direction.x y:newY+direction.y]) {
+            newX += direction.x;
+            newY += direction.y;
+        }
+        BOOL performMove = FALSE;
+        /* If we stopped moving in vector direction, but next index in vector direction is valid, this means the cell is occupied. Let's check if we can merge them*/
+        if ([self indexValid:newX+direction.x y:newY+direction.y]) {
+            // get the other Cell
+            NSInteger otherCellX = newX + direction.x;
+            NSInteger otherCellY = newY + direction.y;
+            Cell *otherCell = _gridArray[otherCellX][otherCellY];
+            // compare value of other Cell and also check if the other thile has been merged this round
+            if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
+                // merge tiles
+                [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
+                movedCellsThisRound = YES;
             } else {
                 // we cannot merge so we want to perform a move
                 performMove = YES;
             }
-            if (performMove) {
-                // Move Cell to furthest position
-                if (newX != currentX || newY !=currentY) {
-                    // only move Cell if position changed
-                    [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
-                    //movedCellsThisRound = TRUE;
+        } else {
+            // we cannot merge so we want to perform a move
+            performMove = YES;
+        }
+        if (performMove) {
+            // Move Cell to furthest position
+            if (newX != currentX || newY !=currentY) {
+                // only move Cell if position changed
+                [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
+                //movedCellsThisRound = TRUE;
+                [self playSound:@"swipe" ofType:@"mp3"];
+            }
+        }
+        // move further
+        currentY += yChange;
+        currentX += xChange;
+    }
+    
+    self.score++;
+    if (movedCellsThisRound) {
+        switch (GRID_SIZE){
+            case 3:
+                if (self.maxvalue < STOP_NUM_SMALL) {
+                    [self spawnRandomCell];
+                }
+                break;
+            case 4:
+                if (self.maxvalue < STOP_NUM_BIG) {
+                    [self spawnRandomCell];
+                }
+                break;
+        }
+        [self iniTimer];
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                Cell *cell = _gridArray[i][j];
+                if (![cell isEqual:_emptyCell]) {
+                    // reset merged flag
+                    cell.mergedThisRound = FALSE;
                 }
             }
-            // move further in this column
-            currentY += yChange;
         }
-        // move to the next column, start at the inital row
-        currentX += xChange;
-        currentY = initialY;
     }
-    
-    if (movedCellsThisRound) {
-        [self nextRound];
+    NSLog(@"livecells = %d", self.livecells);
+    NSLog(@"livecells = %d", self.lastvalue);;
+    //Win and lose condition
+   if(self.livecells == 1){
+        if (self.lastvalue == 0) {
+            [self win];
+        }else{
+            [self lose];
+        }
     }
-    
 }
 
 - (BOOL)indexValid:(NSInteger)x y:(NSInteger)y {
@@ -284,12 +328,8 @@ static const NSInteger WIN_NUM = 610;
     Cell *mergedCell = _gridArray[x][y];
     Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
     //Tracking scores
-    self.score += mergedCell.value + otherCell.value;
-    otherCell.value += mergedCell.value;
+    otherCell.value = mergedCell.value - otherCell.value;
     otherCell.mergedThisRound = TRUE;
-    if (otherCell.value == WIN_NUM) {
-        [self win];
-    }
     _gridArray[x][y] = _emptyCell;
     // 2) update the UI
     CGPoint otherCellPosition = [self positionForColumn:xOtherCell row:yOtherCell];
@@ -297,62 +337,31 @@ static const NSInteger WIN_NUM = 610;
     CCActionRemove *remove = [CCActionRemove action];
     CCActionCallBlock *mergeCell = [CCActionCallBlock actionWithBlock:^{
         [otherCell updateValueDisplay];
+        [self playSound:@"merge" ofType:@"mp3"];
     }];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
+    self.livecells--;
+    self.lastvalue = otherCell.value;
+    
     [mergedCell runAction:sequence];
 }
 
-- (void)nextRound {
-    [self spawnRandomCell];
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            if (![cell isEqual:_emptyCell]) {
-                // reset merged flag
-                cell.mergedThisRound = FALSE;
-            }
-        }
-    }
-    BOOL movePossible = [self movePossible];
-    /*if (!movePossible) {
-        [self lose];
-    }*/
-}
-
-- (BOOL)movePossible {
-    for (int i = 0; i < GRID_SIZE; i++) {
-        for (int j = 0; j < GRID_SIZE; j++) {
-            Cell *cell = _gridArray[i][j];
-            // no Cell at this position
-            if ([cell isEqual:_emptyCell]) {
-                // move possible, we have a free field
-                return TRUE;
-            } else {
-                // there is a Cell at this position. Check if this Cell could move
-                Cell *topNeighbour = [self cellForIndex:i y:j+1];
-                Cell *bottomNeighbour = [self cellForIndex:i y:j-1];
-                Cell *leftNeighbour = [self cellForIndex:i-1 y:j];
-                Cell *rightNeighbour = [self cellForIndex:i+1 y:j];
-                NSArray *neighours = @[topNeighbour, bottomNeighbour, leftNeighbour, rightNeighbour];
-                for (id neighbourCell in neighours) {
-                    if (neighbourCell != _emptyCell) {
-                        Cell *neighbour = (Cell *)neighbourCell;
-                        if (neighbour.value == cell.value) {
-                            return TRUE;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return FALSE;
-}
-
 - (void)win {
+    self.winscore = 0;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+    if (GRID_SIZE == 3) {
+        GRID_SIZE = 4;
+    }
+    [self playSound:@"win" ofType:@"wav"];
     [self endGameWithMessage:@"You win!"];
 }
 
 - (void)lose {
+    self.winscore = self.lastvalue;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+    [self playSound:@"fail" ofType:@"mp3"];
     [self endGameWithMessage:@"You lose!"];
 }
 
@@ -367,9 +376,9 @@ static const NSInteger WIN_NUM = 610;
     [self addChild:gameEndPopover];
     
     NSNumber *highScore = [[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"];
-    if (self.score > [highScore intValue]) {
+    if (self.winscore < [highScore intValue]) {
         // new highscore!
-        highScore = [NSNumber numberWithInt:self.score];
+        highScore = [NSNumber numberWithInt:self.winscore];
         [[NSUserDefaults standardUserDefaults] setObject:highScore forKey:@"highscore"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
@@ -382,5 +391,42 @@ static const NSInteger WIN_NUM = 610;
         return _gridArray[x][y];
     }
 }
+
+//Sound Effect
+-(void)playSound:(NSString*)sound ofType:(NSString*)soundType
+{
+    
+    dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(dispatchQueue, ^(void) {
+        
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef soundFileURLref;
+        soundFileURLref = CFBundleCopyResourceURL(mainBundle ,(__bridge CFStringRef)sound,CFSTR ("wav"),NULL);
+        UInt32 soundID;
+        AudioServicesCreateSystemSoundID(soundFileURLref, &soundID);
+        AudioServicesPlaySystemSound(soundID);
+        CFRelease(soundFileURLref);
+        
+    });
+}
+
+-(void) iniTimer{
+    
+    self.n = TIME_LIM;
+    self.second = TIME_LIM;
+    
+}
+
+-(void)updateTimer:(NSTimer *)timer
+{
+    self.second = self.second - 1;
+    if(self.second < 0){
+        [timer invalidate];
+        [self lose];
+    }
+    self.timeleft = self.n;
+    self.n = self.n - 1;
+}
+
 
 @end
