@@ -18,19 +18,40 @@
     //Store the cell using index of Grid
     NSMutableArray *_gridArray;
     NSNull *_emptyCell;
+<<<<<<< HEAD
     //Store the touch position
+=======
+>>>>>>> origin/master
     float touch_x;
     float touch_y;
 }
 
+<<<<<<< HEAD
 static NSInteger GRID_SIZE = 3;//Grid size
 static const NSInteger TIME_LIM = 15;//Time limitation for each merge
 static const NSInteger STOP_NUM_SMALL = 610;//Stop number for 3*3 grid
 static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
+=======
+<<<<<<< HEAD
+static NSInteger GRID_SIZE = 3;
+//static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static const NSInteger STOP_NUM_SMALL = 610;
+static const NSInteger STOP_NUM_BIG = 2584;
+=======
+static NSInteger GRID_SIZE = 4;
+//static const NSInteger INIT_CELL = GRID_SIZE * GRID_SIZE - 1;
+static const NSInteger STOP_NUM = 610;
+>>>>>>> origin/master
+static const NSInteger TIME_LIM = 15;
+>>>>>>> origin/master
 
 - (void)didLoadFromCCB{
     //Set up the grid
     [self setup];
+<<<<<<< HEAD
+=======
+    self.userInteractionEnabled = TRUE;
+>>>>>>> origin/master
     //Init the start cells
     _gridArray = [NSMutableArray array];
     _emptyCell = [NSNull null];
@@ -44,6 +65,7 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     //Enable UI touch & Gesture recognizer
     self.userInteractionEnabled = TRUE;
     [self addGesture];
+<<<<<<< HEAD
     //Init Timer
     [self iniTimer];
     [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
@@ -60,6 +82,34 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
 
 - (void) setup{//Set up the grid
     //Init the number of live Cells
+=======
+    [self iniTimer];
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
+}
+
+-(void) touchBegan:(CCTouch *)touch withEvent:(UIEvent *)event
+{
+    CGPoint touchLocation = [touch locationInNode:self];
+    BOOL spawned = NO;
+<<<<<<< HEAD
+    //Get Touch Location
+    touch_x = touchLocation.x;
+    touch_y = touchLocation.y;
+=======
+        NSInteger touchRow = (int)(touchLocation.y / (_cellWidth + _cellInterval));
+        NSInteger touchColumn = (int)(touchLocation.x / (_cellWidth + _cellInterval));
+    
+        NSLog(@"%d %d", touchRow, touchColumn);
+        /*BOOL positionFree = (_gridArray[randomColumn][randomRow] == _emptyCell);
+        
+        if (positionFree) {
+            [self addCellAtColunm:randomColumn Row: randomRow];
+            spawned = YES;//
+        }*/
+>>>>>>> origin/master
+}
+- (void) setup{
+>>>>>>> origin/master
     self.livecells = 0;
     //Load the cell
     CCNode *cell = [CCBReader load:@"Cell"];
@@ -105,9 +155,15 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     CCActionScaleTo *scaleUp = [CCActionScaleTo actionWithDuration:0.3f scale:1.0f];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[delay, scaleUp]];
     //Run the animation
+    self.maxvalue = cell.value;
+<<<<<<< HEAD
+    self.livecells++;
+=======
+>>>>>>> origin/master
     [cell runAction:sequence];
 }
 
+<<<<<<< HEAD
 - (void)spawnStartCells {//Spawn start cells
     int initnum;
     if (GRID_SIZE == 3) {
@@ -119,6 +175,10 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     }
     
     for (int i = 0; i < initnum; i++) {
+=======
+- (void)spawnStartCells {
+    for (int i = 0; i < GRID_SIZE * GRID_SIZE - 1; i++) {
+>>>>>>> origin/master
         [self spawnRandomCell];
     }
 }
@@ -180,7 +240,22 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     
 }
 
+<<<<<<< HEAD
 - (void)move:(CGPoint)direction{//Cell moving algorithm
+=======
+<<<<<<< HEAD
+- (void)move:(CGPoint)direction{
+    
+=======
+- (void)move:(CGPoint)direction {
+    
+    self.livecells = GRID_SIZE * GRID_SIZE;
+>>>>>>> origin/master
+    // apply negative vector until reaching boundary, this way we get the Cell that is the furthest away
+    //bottom left corner
+    NSInteger currentX = (int)(touch_x / (_cellWidth + _cellInterval));
+    NSInteger currentY = (int)(touch_y / (_cellWidth + _cellInterval));
+>>>>>>> origin/master
     
     //Get the touch postions
     NSInteger currentX = (int)(touch_x / (_cellWidth + _cellInterval));
@@ -200,6 +275,7 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
         }
     }
    
+<<<<<<< HEAD
     // define changing of x and y value of the cursor
     NSInteger xChange = -direction.x;
     NSInteger yChange = -direction.y;
@@ -209,34 +285,110 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
         Cell *cell = _gridArray[currentX][currentY];
         if ([cell isEqual:_emptyCell]) {
             //Skip if empty
+=======
+    // store initial row value to reset after completing each column
+    NSInteger initialY = currentY;
+    NSInteger initialX = currentX;
+    NSLog(@"initialX=%d initialY=%d", initialX, initialY);
+    // define changing of x and y value (moving left, up, down or right?)
+    NSInteger xChange = -direction.x;
+    NSInteger yChange = -direction.y;
+    
+    NSLog(@"%d %d", xChange, yChange);
+    
+    // visit column for column
+    while ([self indexValid:currentX y:currentY]) {
+<<<<<<< HEAD
+        // get Cell at current index
+        Cell *cell = _gridArray[currentX][currentY];
+        if ([cell isEqual:_emptyCell]) {
+            // if there is no Cell at this index -> skip
+>>>>>>> origin/master
             currentY += yChange;
             currentX += xChange;
             continue;
         }
+<<<<<<< HEAD
         //Store new location if not empty
         NSInteger newX = currentX;
         NSInteger newY = currentY;
         //Find the furthest position
+=======
+        // store index in temp variables to change them and store new location of this Cell
+        NSInteger newX = currentX;
+        NSInteger newY = currentY;
+        /* find the farthest position by iterating in direction of the vector until we reach border of grid or an occupied cell*/
+>>>>>>> origin/master
         while ([self indexValidAndUnoccupied:newX+direction.x y:newY+direction.y]) {
             newX += direction.x;
             newY += direction.y;
         }
+<<<<<<< HEAD
         //Flag of move
         BOOL performMove = FALSE;
+=======
+        BOOL performMove = FALSE;
+        /* If we stopped moving in vector direction, but next index in vector direction is valid, this means the cell is occupied. Let's check if we can merge them*/
+>>>>>>> origin/master
         if ([self indexValid:newX+direction.x y:newY+direction.y]) {
             // get the other Cell
             NSInteger otherCellX = newX + direction.x;
             NSInteger otherCellY = newY + direction.y;
             Cell *otherCell = _gridArray[otherCellX][otherCellY];
+<<<<<<< HEAD
             //Check if merging condition is satisfied
             if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
                 //Merge cell
                 [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
                 mergedCellsThisRound = YES;
+=======
+            // compare value of other Cell and also check if the other thile has been merged this round
+            if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
+                // merge tiles
+                [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
+                movedCellsThisRound = YES;
+=======
+        while ([self indexValid:currentX y:currentY]) {
+            // get Cell at current index
+            Cell *cell = _gridArray[currentX][currentY];
+            if ([cell isEqual:_emptyCell]) {
+                // if there is no Cell at this index -> skip
+                self.livecells--;
+                currentY += yChange;
+                continue;
+            }
+            // store index in temp variables to change them and store new location of this Cell
+            NSInteger newX = currentX;
+            NSInteger newY = currentY;
+            /* find the farthest position by iterating in direction of the vector until we reach border of grid or an occupied cell*/
+            while ([self indexValidAndUnoccupied:newX+direction.x y:newY+direction.y]) {
+                newX += direction.x;
+                newY += direction.y;
+            }
+            BOOL performMove = FALSE;
+            /* If we stopped moving in vector direction, but next index in vector direction is valid, this means the cell is occupied. Let's check if we can merge them*/
+            if ([self indexValid:newX+direction.x y:newY+direction.y]) {
+                // get the other Cell
+                NSInteger otherCellX = newX + direction.x;
+                NSInteger otherCellY = newY + direction.y;
+                Cell *otherCell = _gridArray[otherCellX][otherCellY];
+                // compare value of other Cell and also check if the other thile has been merged this round
+                if (cell.value >= otherCell.value && !otherCell.mergedThisRound) {
+                    // merge tiles
+                    [self mergeCellAtIndex:currentX y:currentY withCellAtIndex:otherCellX y:otherCellY];
+                    self.livecells--;
+                    movedCellsThisRound = YES;
+                } else {
+                    // we cannot merge so we want to perform a move
+                    performMove = YES;
+                }
+>>>>>>> origin/master
+>>>>>>> origin/master
             } else {
                 //Move if cannot merge
                 performMove = YES;
             }
+<<<<<<< HEAD
         } else {
             //Move if cannot merge
             performMove = YES;
@@ -248,16 +400,47 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
                 [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
                 //Sound effect of move
                 [self playSound:@"swipe" ofType:@"mp3"];
+=======
+<<<<<<< HEAD
+        } else {
+            // we cannot merge so we want to perform a move
+            performMove = YES;
+        }
+        if (performMove) {
+            // Move Cell to furthest position
+            if (newX != currentX || newY !=currentY) {
+                // only move Cell if position changed
+                [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
+                //movedCellsThisRound = TRUE;
+                [self playSound:@"swipe" ofType:@"mp3"];
+=======
+            if (performMove) {
+                // Move Cell to furthest position
+                if (newX != currentX || newY !=currentY) {
+                    // only move Cell if position changed
+                    [self moveCell:cell fromIndex:currentX oldY:currentY newX:newX newY:newY];
+                    //movedCellsThisRound = TRUE;
+                    [self playSound:@"swipe" ofType:@"mp3"];
+                }
+>>>>>>> origin/master
+>>>>>>> origin/master
             }
         }
         // move further
         currentY += yChange;
         currentX += xChange;
     }
+<<<<<<< HEAD
     //Step count increases
     self.score++;
     //Spawn new cell after each merge
     if (mergedCellsThisRound) {
+=======
+<<<<<<< HEAD
+    
+    self.score++;
+    if (movedCellsThisRound) {
+>>>>>>> origin/master
         switch (GRID_SIZE){
             case 3:
                 if (self.maxvalue < STOP_NUM_SMALL) {
@@ -269,21 +452,49 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
                     [self spawnRandomCell];
                 }
                 break;
+<<<<<<< HEAD
         }
         //Init timer after merge
+=======
+=======
+   
+    self.score++;
+    if (movedCellsThisRound) {
+        if (self.maxvalue < STOP_NUM) {
+            [self spawnRandomCell];
+            self.livecells++;
+>>>>>>> origin/master
+        }
+>>>>>>> origin/master
         [self iniTimer];
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 Cell *cell = _gridArray[i][j];
                 if (![cell isEqual:_emptyCell]) {
+<<<<<<< HEAD
                     // reset merge flag
+=======
+                    // reset merged flag
+>>>>>>> origin/master
                     cell.mergedThisRound = FALSE;
                 }
             }
         }
     }
+<<<<<<< HEAD
     //Check if win or lose condition is satisfied
    if(self.livecells == 1){
+=======
+<<<<<<< HEAD
+    NSLog(@"livecells = %d", self.livecells);
+    NSLog(@"livecells = %d", self.lastvalue);;
+    //Win and lose condition
+   if(self.livecells == 1){
+=======
+    //Win and lose condition
+    if(self.livecells == 1){
+>>>>>>> origin/master
+>>>>>>> origin/master
         if (self.lastvalue == 0) {
             [self win];
         }else{
@@ -335,7 +546,11 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     //Store two cells before merging
     Cell *mergedCell = _gridArray[x][y];
     Cell *otherCell = _gridArray[xOtherCell][yOtherCell];
+<<<<<<< HEAD
     //Set new value as the difference
+=======
+    //Tracking scores
+>>>>>>> origin/master
     otherCell.value = mergedCell.value - otherCell.value;
     otherCell.mergedThisRound = TRUE;
     _gridArray[x][y] = _emptyCell;
@@ -353,10 +568,18 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
         [self playSound:@"merge" ofType:@"mp3"];
     }];
     CCActionSequence *sequence = [CCActionSequence actionWithArray:@[moveTo, mergeCell, remove]];
+<<<<<<< HEAD
+    self.livecells--;
+=======
+    
+>>>>>>> origin/master
+    self.lastvalue = otherCell.value;
+    
     [mergedCell runAction:sequence];
 }
 
 - (void)win {
+<<<<<<< HEAD
     //Record winscore
     self.winscore = 0;
     //Init the num in Cell
@@ -369,10 +592,29 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     //Sound effect
     [self playSound:@"win" ofType:@"wav"];
     //End with message
+=======
+<<<<<<< HEAD
+    self.winscore = 0;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+    if (GRID_SIZE == 3) {
+        GRID_SIZE = 4;
+    }
+    [self playSound:@"win" ofType:@"wav"];
+=======
+    self.winscore = self.score;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+    if (GRID_SIZE == 4) {
+        GRID_SIZE = 3;
+    }
+>>>>>>> origin/master
+>>>>>>> origin/master
     [self endGameWithMessage:@"You win!"];
 }
 
 - (void)lose {
+<<<<<<< HEAD
     //Record lastscore
     self.winscore = self.lastvalue;
     //Init the num in Cell
@@ -381,6 +623,18 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     //Sound effect
     [self playSound:@"fail" ofType:@"mp3"];
     //End with message
+=======
+<<<<<<< HEAD
+    self.winscore = self.lastvalue;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+    [self playSound:@"fail" ofType:@"mp3"];
+=======
+    self.winscore = 0;
+    Cell *cell = (Cell*)[CCBReader load:@"Cell"];
+    [cell setNum: -1];
+>>>>>>> origin/master
+>>>>>>> origin/master
     [self endGameWithMessage:@"You lose!"];
 }
 
@@ -411,7 +665,13 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     }
 }
 
+<<<<<<< HEAD
 -(void)playSound:(NSString*)sound ofType:(NSString*)soundType{//Sound Effect
+=======
+//Sound Effect
+-(void)playSound:(NSString*)sound ofType:(NSString*)soundType
+{
+>>>>>>> origin/master
     
     dispatch_queue_t dispatchQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(dispatchQueue, ^(void) {
@@ -427,14 +687,23 @@ static const NSInteger STOP_NUM_BIG = 2584;//Stop number for 4*4 grid
     });
 }
 
+<<<<<<< HEAD
 -(void) iniTimer{//Init Timer
+=======
+-(void) iniTimer{
+>>>>>>> origin/master
     
     self.n = TIME_LIM;
     self.second = TIME_LIM;
     
 }
 
+<<<<<<< HEAD
 -(void)updateTimer:(NSTimer *)timer{//Update Timer
+=======
+-(void)updateTimer:(NSTimer *)timer
+{
+>>>>>>> origin/master
     self.second = self.second - 1;
     if(self.second < 0){
         [timer invalidate];

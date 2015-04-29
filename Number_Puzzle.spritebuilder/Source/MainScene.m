@@ -27,7 +27,11 @@
                        context:(void *)context
 {
     if ([keyPath isEqualToString:@"score"]) {
+<<<<<<< HEAD
         _stepLabel.string = [NSString stringWithFormat:@"%d", _grid.score];
+=======
+        _scoreLabel.string = [NSString stringWithFormat:@"%d", _grid.score];
+>>>>>>> origin/master
     }else if ([keyPath isEqualToString:@"timeleft"]) {
         if(_grid.timeleft>=10){
             _timerLabel.string = [NSString stringWithFormat:@"0:%d", _grid.timeleft];
