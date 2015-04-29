@@ -4,20 +4,21 @@
 @implementation MainScene{
     
     Grid *_grid;
-    CCLabelTTF *_scoreLabel;
-    CCLabelTTF *_highestscoreLabel;
+    CCLabelTTF *_stepLabel;
+    CCLabelTTF *_lowestReachLabel;
     CCLabelTTF *_timerLabel;
 }
 
 - (void)didLoadFromCCB {
+    
     [_grid addObserver:self forKeyPath:@"score" options:0 context:NULL];
-    //Display the highest score
+    [_grid addObserver:self forKeyPath:@"timeleft" options:0 context:NULL];
     [[NSUserDefaults standardUserDefaults] addObserver:self
                                             forKeyPath:@"highscore"
                                                options:0
                                                context:NULL];
     // load highscore
-    [self updateHighscore];
+    [self updatelowestReach];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -26,20 +27,28 @@
                        context:(void *)context
 {
     if ([keyPath isEqualToString:@"score"]) {
-        _scoreLabel.string = [NSString stringWithFormat:@"%d", _grid.score];
+        _stepLabel.string = [NSString stringWithFormat:@"%d", _grid.score];
+    }else if ([keyPath isEqualToString:@"timeleft"]) {
+        if(_grid.timeleft>=10){
+            _timerLabel.string = [NSString stringWithFormat:@"0:%d", _grid.timeleft];
+        }else{
+            _timerLabel.string = [NSString stringWithFormat:@"0:0%d", _grid.timeleft];
+        }
+        
     }else if ([keyPath isEqualToString:@"highscore"]) {
-        [self updateHighscore];
+        [self updatelowestReach];
     }
 }
 
 - (void)dealloc {
     [_grid removeObserver:self forKeyPath:@"score"];
+    [_grid removeObserver:self forKeyPath:@"timeleft"];
 }
 
-- (void)updateHighscore {
+- (void)updatelowestReach {
     NSNumber *newHighscore = [[NSUserDefaults standardUserDefaults] objectForKey:@"highscore"];
     if (newHighscore) {
-        _highestscoreLabel.string = [NSString stringWithFormat:@"%d", [newHighscore intValue]];
+        _lowestReachLabel.string = [NSString stringWithFormat:@"%d", [newHighscore intValue]];
     }
 }
 

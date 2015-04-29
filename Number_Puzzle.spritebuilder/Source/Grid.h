@@ -10,6 +10,15 @@
 
 @interface Grid : CCNodeColor
 
-@property (nonatomic, assign) NSInteger score;
+@property (nonatomic, assign) NSInteger score;//Step count
+@property (nonatomic, assign) NSInteger winscore;//WinScore
+@property (nonatomic, assign) NSInteger timeleft;//Timer max
+@property int n ;//Timer
+@property int second;//Timer
+@property NSInteger maxvalue;//Max value in gird
+@property NSInteger livecells;//Live cells count
+@property NSInteger lastvalue;//Last value
+
+- (void) setNum:(NSInteger)Value;
 
 @end

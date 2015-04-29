@@ -7,10 +7,12 @@
 //
 
 #import "GameEnd.h"
+#import "Cell.h"
 
 @implementation GameEnd {
     CCLabelTTF *_messageLabel;
     CCLabelTTF *_scoreLabel;
+    CCLabelTTF *_lastValueLabel;
 }
 
 - (void)newGame {
@@ -18,9 +20,10 @@
     [[CCDirector sharedDirector]replaceScene:mainScene];
 }
 
-- (void)setMessage:(NSString *)message score:(NSInteger)score {
+- (void)setMessage:(NSString *)message score:(NSInteger)score with:(NSInteger) lastvalue{
     _messageLabel.string = message;
-    _scoreLabel.string = [NSString stringWithFormat:@"%d", score];
+    _scoreLabel.string = [NSString stringWithFormat:@"Step: %ld", (long)score];
+    _lastValueLabel.string = [NSString stringWithFormat:@"Lowest Reached: %ld", (long)lastvalue];
 }
 
 @end

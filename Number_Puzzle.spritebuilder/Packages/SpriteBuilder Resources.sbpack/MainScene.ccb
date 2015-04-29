@@ -395,7 +395,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.18437500298023224</real>
+							<real>0.09375</real>
 							<real>0.27394363284111023</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -443,7 +443,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Chalkduster</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -595,7 +595,7 @@
 				<key>displayName</key>
 				<string>CCLabelTTF</string>
 				<key>memberVarAssignmentName</key>
-				<string>_scoreLabel</string>
+				<string>_stepLabel</string>
 				<key>memberVarAssignmentType</key>
 				<integer>1</integer>
 				<key>properties</key>
@@ -615,7 +615,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.18437500298023224</real>
+							<real>0.09375</real>
 							<real>0.19330988824367523</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -663,7 +663,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Copperplate-Bold</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -835,7 +835,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.5</real>
+							<real>0.47812500596046448</real>
 							<real>0.27394363284111023</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -873,7 +873,7 @@
 						<string>Text</string>
 						<key>value</key>
 						<array>
-							<string>Highest Score</string>
+							<string>Lowest Reached</string>
 							<false/>
 						</array>
 					</dict>
@@ -883,7 +883,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Chalkduster</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -1035,7 +1035,7 @@
 				<key>displayName</key>
 				<string>CCLabelTTF</string>
 				<key>memberVarAssignmentName</key>
-				<string>_highestscoreLabel</string>
+				<string>_lowestReachLabel</string>
 				<key>memberVarAssignmentType</key>
 				<integer>1</integer>
 				<key>properties</key>
@@ -1055,7 +1055,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.5</real>
+							<real>0.47812500596046448</real>
 							<real>0.19330988824367523</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -1103,7 +1103,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Copperplate</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -1275,7 +1275,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.82187497615814209</real>
+							<real>0.87656247615814209</real>
 							<real>0.27394363284111023</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -1323,7 +1323,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Chalkduster</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -1495,7 +1495,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.82187497615814209</real>
+							<real>0.86874997615814209</real>
 							<real>0.19330988824367523</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -1543,7 +1543,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Copperplate-Bold</string>
 					</dict>
 					<dict>
 						<key>name</key>
