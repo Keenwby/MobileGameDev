@@ -294,19 +294,10 @@
 		4AD8F5021AED949A007834F9 /* Sound */ = {
 			isa = PBXGroup;
 			children = (
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> origin/master
 				4AAB9FB61AEEE00600B42295 /* fail.mp3 */,
 				4AAB9FB71AEEE00600B42295 /* fail.wav */,
 				4AAB9FB81AEEE00600B42295 /* win.mp3 */,
 				4AAB9FB91AEEE00600B42295 /* win.wav */,
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/master
->>>>>>> origin/master
 				4AD8F50E1AED9638007834F9 /* merge.wav */,
 				4AD8F50F1AED9638007834F9 /* swipe.wav */,
 				4AD8F5041AED94AE007834F9 /* merge.mp3 */,
@@ -775,24 +766,11 @@
 				B71F5913188484E7003F4D28 /* iPad.png in Resources */,
 				B71F5912188484E7003F4D28 /* iPad-old@2x.png in Resources */,
 				B71F5916188484E7003F4D28 /* iPhone-old@2x.png in Resources */,
-<<<<<<< HEAD
 				4AAB9FBA1AEEE00600B42295 /* fail.mp3 in Resources */,
 				4AD8F5111AED9638007834F9 /* swipe.wav in Resources */,
 				4AAB9FBD1AEEE00600B42295 /* win.wav in Resources */,
 				B737893B180761570076A88C /* Published-iOS in Resources */,
 				4AAB9FBB1AEEE00600B42295 /* fail.wav in Resources */,
-=======
-<<<<<<< HEAD
-				4AAB9FBA1AEEE00600B42295 /* fail.mp3 in Resources */,
-				4AD8F5111AED9638007834F9 /* swipe.wav in Resources */,
-				4AAB9FBD1AEEE00600B42295 /* win.wav in Resources */,
-				B737893B180761570076A88C /* Published-iOS in Resources */,
-				4AAB9FBB1AEEE00600B42295 /* fail.wav in Resources */,
-=======
-				4AD8F5111AED9638007834F9 /* swipe.wav in Resources */,
-				B737893B180761570076A88C /* Published-iOS in Resources */,
->>>>>>> origin/master
->>>>>>> origin/master
 				4AD8F5061AED94AE007834F9 /* merge.mp3 in Resources */,
 				B71F591A188484E7003F4D28 /* Settings@2x.png in Resources */,
 				4AD8F5101AED9638007834F9 /* merge.wav in Resources */,

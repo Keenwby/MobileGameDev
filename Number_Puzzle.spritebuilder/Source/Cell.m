@@ -14,13 +14,8 @@
     CCLabelTTF *_valueLabel;
 }
 
-<<<<<<< HEAD
 static const NSInteger MAX_NUM = 24;
 static int Fibonacci[MAX_NUM];
-=======
-static const NSInteger WIN_NUM = 25;
-static int Fibonacci[WIN_NUM];
->>>>>>> origin/master
 int num = -1;
 - (void)didLoadFromCCB {
     [self initFibonacci];
