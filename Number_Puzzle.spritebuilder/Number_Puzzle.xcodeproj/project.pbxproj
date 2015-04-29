@@ -108,6 +108,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		4A87AE0E1AF084D600B26AE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B77F1B2E17B978D7009739AE;
+			remoteInfo = "Number_Puzzle iOS";
+		};
+		4A87AE101AF084D600B26AE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 927F61BF196C771E000F43EF;
+			remoteInfo = "Number_Puzzle Android";
+		};
+		4A87AE121AF084D600B26AE4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7A4035FF19DDEE84007B6E8F;
+			remoteInfo = "Number_Puzzle Mac";
+		};
 		7A9790FD19E62E40001FFC4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B7378940180761A80076A88C /* cocos2d.xcodeproj */;
@@ -157,6 +178,7 @@
 		4A09662C1ABFB365000B4964 /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Grid.m; path = Source/Grid.m; sourceTree = "<group>"; };
 		4A09662F1ABFB385000B4964 /* Cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cell.h; path = Source/Cell.h; sourceTree = "<group>"; };
 		4A0966301ABFB385000B4964 /* Cell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Cell.m; path = Source/Cell.m; sourceTree = "<group>"; };
+		4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Number_Puzzle.xcodeproj; path = ../../../Desktop/MobileGameDev/Number_Puzzle.spritebuilder/Number_Puzzle.xcodeproj; sourceTree = "<group>"; };
 		4AAB9FB61AEEE00600B42295 /* fail.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = fail.mp3; path = Source/fail.mp3; sourceTree = "<group>"; };
 		4AAB9FB71AEEE00600B42295 /* fail.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = fail.wav; path = Source/fail.wav; sourceTree = "<group>"; };
 		4AAB9FB81AEEE00600B42295 /* win.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = win.mp3; path = Source/win.mp3; sourceTree = "<group>"; };
@@ -291,6 +313,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A87AE021AF084D500B26AE4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4A87AE0F1AF084D600B26AE4 /* Number_Puzzle.app */,
+				4A87AE111AF084D600B26AE4 /* Number_Puzzle Android.app */,
+				4A87AE131AF084D600B26AE4 /* Number_Puzzle Mac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		4AD8F5021AED949A007834F9 /* Sound */ = {
 			isa = PBXGroup;
 			children = (
@@ -475,6 +507,7 @@
 				D352B48019EC608A00829775 /* MetalShaders */,
 				4A09662B1ABFB365000B4964 /* Grid.h */,
 				4A09662C1ABFB365000B4964 /* Grid.m */,
+				4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */,
 				4A09662F1ABFB385000B4964 /* Cell.h */,
 				4A0966301ABFB385000B4964 /* Cell.m */,
 				4ABDE9731ADCDC4800FCD155 /* GameEnd.h */,
@@ -675,6 +708,10 @@
 					ProductGroup = 7A9790F619E62E3F001FFC4D /* Products */;
 					ProjectRef = B7378940180761A80076A88C /* cocos2d.xcodeproj */;
 				},
+				{
+					ProductGroup = 4A87AE021AF084D500B26AE4 /* Products */;
+					ProjectRef = 4A87AE011AF084D500B26AE4 /* Number_Puzzle.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -686,6 +723,27 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		4A87AE0F1AF084D600B26AE4 /* Number_Puzzle.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = Number_Puzzle.app;
+			remoteRef = 4A87AE0E1AF084D600B26AE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4A87AE111AF084D600B26AE4 /* Number_Puzzle Android.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Number_Puzzle Android.app";
+			remoteRef = 4A87AE101AF084D600B26AE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		4A87AE131AF084D600B26AE4 /* Number_Puzzle Mac.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Number_Puzzle Mac.app";
+			remoteRef = 4A87AE121AF084D600B26AE4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		7A9790FE19E62E40001FFC4D /* libcocos2d.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
